@@ -1,4 +1,4 @@
-import {Rail} from "../src/rail";
+import {Rail} from "../src/domain/rail";
 import {RandomizerStub} from "./stub/randomizer-stub";
 
 describe("rail tests", ()=> {

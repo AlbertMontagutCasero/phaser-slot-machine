@@ -1,3 +1,5 @@
+import {OptionId} from "../shared/option-id";
+
 export class Rail {
 
   /**
@@ -6,7 +8,7 @@ export class Rail {
    */
   constructor(randomizer) {
     this.randomProvider = randomizer;
-    this.possibleOptions = ["7", "cherry", "bell", "bar"];
+    this.possibleOptions = [OptionId.seven, OptionId.cherry, OptionId.bell, OptionId.bar];
     this.currentOption = 0;
   }
 
