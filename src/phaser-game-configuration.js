@@ -4,9 +4,13 @@ import BootloaderScene from "./scenes/bootloader-scene";
 
 export const gameConfig = {
   type: Phaser.CANVAS,
-  width: 1280,
-  height: 720,
   scene: [BootloaderScene],
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 1280,
+    height: 720,
+  },
   physics: { 
     default: "arcade",
     arcade: {
