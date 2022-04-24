@@ -1,0 +1,26 @@
+name: Run Test with Jest
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.1.1
+        with:
+          node-version: 14.x
+
+      - run: npm install
+
+      - name: Run Jest
+        uses: stefanoeb/jest-action@1.0.4
