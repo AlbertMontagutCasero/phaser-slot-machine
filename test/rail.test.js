@@ -8,7 +8,7 @@ describe("rail tests", ()=> {
     {expectedValue: "bell", randomStubValue: 2},
     {expectedValue: "bar", randomStubValue: 3},
   ];
-  test.each(cases)("given %s when get option after generate option should be the expected value ", ({expectedValue, randomStubValue}) => {
+  test.each(cases)("given '$randomStubValue' index when get option after generate option should be '$expectedValue' ", ({expectedValue, randomStubValue}) => {
     // Arrange
     const sut = new Rail(new RandomizerStub([randomStubValue]));
 
@@ -19,5 +19,4 @@ describe("rail tests", ()=> {
     // Assert
     expect(result).toBe(expectedValue);
   });
-
 });
