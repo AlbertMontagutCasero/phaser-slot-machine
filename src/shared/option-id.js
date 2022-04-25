@@ -5,6 +5,14 @@ export const OptionId = {
   bar: "bar",
 };
 
-export function getOptionIdIndex(optionId){
-  return Object.keys(OptionId).findIndex(option => OptionId[option] === optionId);
+export function getOptionIdIndex(optionId) {
+  return getOptionIdAsArray().findIndex(([key]) => OptionId[key] === optionId);
+}
+
+export function getOptionIdAsArray() {
+  return Object.entries(OptionId);
+}
+
+export function getOptionIdAmount() {
+  return getOptionIdAsArray().length;
 }
