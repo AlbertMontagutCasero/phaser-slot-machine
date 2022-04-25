@@ -1,9 +1,10 @@
 import {GameObjects} from "phaser";
-import assert from "../shared/assert";
+import assert from "../../shared/assert";
 
 export class SlotMachineBackgroundGameObject extends GameObjects.Image {
   constructor(scene) {
     assert(scene !== undefined);
+
     const gameSize = scene.game.scale.gameSize;
     const centerScreenX = gameSize.width / 2;
     const centerScreenY = gameSize.height / 2;

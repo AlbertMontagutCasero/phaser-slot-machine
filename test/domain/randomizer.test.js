@@ -1,4 +1,4 @@
-import {Randomizer} from "../src/domain/random/randomizer";
+import {Randomizer} from "../../src/domain/random/randomizer";
 
 test("given min and max when get random float between min inclusive and max inclusive should return a number in this range", () => {
   const sut = new Randomizer();

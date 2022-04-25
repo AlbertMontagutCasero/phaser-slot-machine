@@ -8,7 +8,3 @@ export const OptionId = {
 export function getOptionIdIndex(optionId){
   return Object.keys(OptionId).findIndex(option => OptionId[option] === optionId);
 }
-
-export function getNextRailPosition(optionId){
-  return getOptionIdIndex(optionId) + Object.keys(OptionId).length;
-}

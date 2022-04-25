@@ -1,5 +1,5 @@
-import {RandomizerStub} from "./stub/randomizer-stub";
-import {SlotMachine} from "../src/domain/slot-machine";
+import {RandomizerStub} from "../stub/randomizer-stub";
+import {SlotMachine} from "../../src/domain/slot-machine";
 
 describe("combinations tests", () => {
   let cases = [

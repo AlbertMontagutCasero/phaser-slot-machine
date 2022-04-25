@@ -1,7 +1,7 @@
 import {GameObjects} from "phaser";
-import assert from "../shared/assert";
+import assert from "../../shared/assert";
 
-export class SlotMachineOptionBackgroundGameObject extends GameObjects.Image {
+export class RailsBackgroundGameObject extends GameObjects.Image {
   constructor(scene) {
     assert(scene !== undefined);
 

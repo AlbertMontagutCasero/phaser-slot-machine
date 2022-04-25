@@ -1,5 +1,5 @@
 import {GameObjects} from "phaser";
-import assert from "../shared/assert";
+import assert from "../../shared/assert";
 
 export class SlotMachineHandleGameObject extends GameObjects.Image {
   constructor(scene) {
@@ -18,7 +18,7 @@ export class SlotMachineHandleGameObject extends GameObjects.Image {
     });
   }
 
-  setToRunning(running = true){
+  setToInRunState(running = true){
     const texture = running ? "slot-machine-handle-pressed" : "slot-machine-handle";
     this.setTexture(texture);
   }

@@ -1,5 +1,5 @@
 import {GameObjects} from "phaser";
-import assert from "../shared/assert";
+import assert from "../../shared/assert";
 
 export class OptionGameObject extends GameObjects.Image {
   constructor(scene, texture, railPosition) {

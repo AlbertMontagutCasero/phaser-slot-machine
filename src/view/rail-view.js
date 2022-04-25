@@ -1,11 +1,11 @@
-import {getNextRailPosition, OptionId} from "../shared/option-id";
+import {getOptionIdIndex, OptionId} from "../shared/option-id";
 import {Math} from "phaser";
-import {OptionGameObject} from "./option-game-object";
+import {OptionGameObject} from "./game-object/option-game-object";
 
 export class RailView{
-  constructor(scene, position) {
+  constructor(scene, position, railsMask) {
     this.scene = scene;
-    this.options = this.createOptions(position);
+    this.options = this.createOptions(position, railsMask);
     this.distributeVertically();
 
     this.currentPosition = 4;
@@ -14,13 +14,14 @@ export class RailView{
   /**
    *
    * @param position
+   * @param mask
    * @return {OptionGameObject[]}
    */
-  createOptions(position) {
+  createOptions(position, mask) {
     let options = [];
-    const mask = this.createMask(position);
 
-    for (let i = 0; i < 8; i++) {
+    const groupOfOptions = 8;
+    for (let i = 0; i < groupOfOptions; i++) {
       for (let optionIdKey in OptionId) {
         const option = new OptionGameObject(this.scene, `option-${optionIdKey}`, position);
         option.setMask(mask);
@@ -46,8 +47,12 @@ export class RailView{
     return 120 * index;
   }
 
+  getNextRailPosition(optionId){
+    return getOptionIdIndex(optionId) + Object.keys(OptionId).length;
+  }
+
   async scrollTo(optionId) {
-    let nextRailPosition = getNextRailPosition(optionId);
+    let nextRailPosition = this.getNextRailPosition(optionId);
     let scrollObjective = this.currentPosition + nextRailPosition;
     this.currentPosition = nextRailPosition;
     let pixelsToMove = this.getPositionDisplacementInPixels(scrollObjective);
@@ -111,16 +116,5 @@ export class RailView{
         },
       });
     });
-  }
-
-  createMask(position) {
-    let shape = this.scene.make.graphics();
-    shape.fillStyle(0xffffff);
-    shape.beginPath();
-
-    const margin = 150;
-    shape.fillRect(440 + margin * position,300, 110, 200);
-
-    return shape.createGeometryMask();
   }
 }
