@@ -24,3 +24,6 @@ jobs:
 
       - name: Run Jest
         uses: stefanoeb/jest-action@1.0.4
+
+      - name: Jest badges generation action
+        uses: jpb06/jest-badges-action@v1.8.7
