@@ -10,7 +10,7 @@ export class SlotMachineHandleGameObject extends GameObjects.Image {
 
     this.observers = [];
 
-    this.setInteractive({ useHandCursor: true });
+    this.setToInRunState(false);
     this.input.hitArea.setTo(675, 300, 80, 80);
 
     this.on("pointerdown", () => {
@@ -18,22 +18,27 @@ export class SlotMachineHandleGameObject extends GameObjects.Image {
     });
   }
 
-  setToInRunState(running = true){
-    const texture = running ? "slot-machine-handle-pressed" : "slot-machine-handle";
+  setToInRunState(hasToEnable = true) {
+    const texture = hasToEnable ? "slot-machine-handle-pressed" : "slot-machine-handle";
     this.setTexture(texture);
+    if (hasToEnable) {
+      this.disableInteractive();
+    } else {
+      this.setInteractive({useHandCursor: true});
+    }
   }
 
-  notifyAll(){
-    for (let i = 0; i < this.observers.length; i++){
+  notifyAll() {
+    for (let i = 0; i < this.observers.length; i++) {
       this.observers[i].notifyHandlePressed();
     }
   }
 
-  subscribeToPressed(observer){
+  subscribeToPressed(observer) {
     this.observers.push(observer);
   }
 
-  unSubscribeToPressed(observer){
+  unSubscribeToPressed(observer) {
     this.observers = this.observers.filter((item) => {
       return item !== observer;
     });

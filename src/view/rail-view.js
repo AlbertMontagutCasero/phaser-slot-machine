@@ -1,14 +1,15 @@
-import {getOptionIdIndex, OptionId} from "../shared/option-id";
 import {Math} from "phaser";
 import {OptionGameObject} from "./game-object/option-game-object";
+import {RailViewMotor} from "./rail-view.motor";
+import {OptionId} from "../shared/option-id";
 
-export class RailView{
+
+export class RailView {
   constructor(scene, position, railsMask) {
     this.scene = scene;
+    this.motor = new RailViewMotor();
     this.options = this.createOptions(position, railsMask);
-    this.distributeVertically();
-
-    this.currentPosition = 4;
+    this.currentObjective = this.motor.getRailPosition(OptionId.seven);
   }
 
   /**
@@ -18,86 +19,72 @@ export class RailView{
    * @return {OptionGameObject[]}
    */
   createOptions(position, mask) {
-    let options = [];
-
-    const groupOfOptions = 8;
-    for (let i = 0; i < groupOfOptions; i++) {
-      for (let optionIdKey in OptionId) {
-        const option = new OptionGameObject(this.scene, `option-${optionIdKey}`, position);
-        option.setMask(mask);
-        options.push(option);
-      }
+    const optionGameObjects = [];
+    const startOptions = this.motor.getStartOptions();
+    for (const option of startOptions) {
+      const optionGameObject = new OptionGameObject(this.scene, `option-${option.optionId}`, position);
+      optionGameObject.setMask(mask);
+      optionGameObject.y = option.yPosition;
+      optionGameObjects.push(optionGameObject);
     }
-    return options;
-  }
-
-  distributeVertically(){
-    let secondGroupFirstPositionIndex = this.getPositionInPixels(4);
-    this.options.forEach((option,index )=> {
-      option.setY(secondGroupFirstPositionIndex + this.getPositionDisplacementInPixels(index));
-    });
-  }
-
-  getPositionInPixels(index){
-    const firstOptionPosition = 410;
-    return firstOptionPosition - this.getPositionDisplacementInPixels(index);
-  }
-
-  getPositionDisplacementInPixels(index){
-    return 120 * index;
-  }
-
-  getNextRailPosition(optionId){
-    return getOptionIdIndex(optionId) + Object.keys(OptionId).length;
+    return optionGameObjects;
   }
 
   async scrollTo(optionId) {
-    let nextRailPosition = this.getNextRailPosition(optionId);
-    let scrollObjective = this.currentPosition + nextRailPosition;
-    this.currentPosition = nextRailPosition;
-    let pixelsToMove = this.getPositionDisplacementInPixels(scrollObjective);
 
-    await this.scrollToObjective(pixelsToMove);
+    await this.scrollToObjective(optionId);
     const numberOfLoops = 5;
-    for( let i = 0; i < numberOfLoops; i++){
-      this.teleportToLoopStart();
-      await this.loopAnimation();
-    }
-
-    this.teleportToLoopStart();
+    await this.loopAnimation(numberOfLoops);
     await this.endAnimation();
-    this.teleportToLoopStart();
   }
 
-  async scrollToObjective(pixelsToReachTheObjective) {
+  async scrollToObjective(objectiveId) {
+    const destination = this.motor.getRailPosition(objectiveId);
+    const pixelsPerSecond = this.motor.getDisplacementPixelsByPosition(4);
+    const {
+      timeToReachMs,
+      distancePixelsMs
+    } = this.motor.getDistancePixelsAndTimeToReach(this.currentObjective, destination, pixelsPerSecond);
+
     await new Promise(resolve => {
       this.scene.tweens.add({
-        targets: this.options,
-        y: `-= ${pixelsToReachTheObjective}`,
-        duration: 1000,
+        targets: {distance: 0},
+        distance: distancePixelsMs,
+        duration: timeToReachMs,
         ease: Math.Easing.Back.In,
-        onComplete: (tween, targets, param) => {
+        onUpdate: (tween) => {
+          let previousDistance = tween.data[0].previous;
+          let currentDistance = tween.data[0].current;
+          let deltaDistance = currentDistance - previousDistance;
+          this.options.forEach(option => this.motor.moveOption(option, deltaDistance));
+        },
+        onComplete: () => {
           resolve();
         },
       });
     });
   }
 
-  teleportToLoopStart() {
-    for (let i = 0; i < this.options.length; i++) {
-      let current = this.options[i];
-      current.y += this.getPositionDisplacementInPixels(8);
-    }
-  }
+  async loopAnimation(loops) {
+    const destination = this.motor.getRailPosition(this.currentObjective);
+    const pixelsPerSecond = this.motor.getDisplacementPixelsByPosition(12);
+    const {
+      timeToReachMs,
+      distancePixelsMs
+    } = this.motor.getDistancePixelsAndTimeToReach(this.currentObjective, destination, pixelsPerSecond);
 
-  async loopAnimation(){
     await new Promise(resolve => {
       this.scene.tweens.add({
-        targets: this.options,
-        y: `-= ${this.getPositionDisplacementInPixels(8)}`,
-        duration: 1000,
-
-        onComplete: (tween, targets, param) => {
+        targets: {distance: 0},
+        distance: distancePixelsMs * loops,
+        duration: timeToReachMs * loops,
+        onUpdate: (tween) => {
+          let previousDistance = tween.data[0].previous;
+          let currentDistance = tween.data[0].current;
+          let deltaDistance = currentDistance - previousDistance;
+          this.options.forEach(option => this.motor.moveOption(option, deltaDistance));
+        },
+        onComplete: () => {
           resolve();
         },
       });
@@ -105,13 +92,26 @@ export class RailView{
   }
 
   async endAnimation() {
+    const destination = this.motor.getRailPosition(this.currentObjective);
+    const pixelsPerSecond = this.motor.getDisplacementPixelsByPosition(12);
+    const {
+      timeToReachMs,
+      distancePixelsMs
+    } = this.motor.getDistancePixelsAndTimeToReach(this.currentObjective, destination, pixelsPerSecond);
+
     await new Promise(resolve => {
       this.scene.tweens.add({
-        targets: this.options,
-        y: `-= ${this.getPositionDisplacementInPixels(8)}`,
-        duration: 1000,
+        targets: {distance: 0},
+        distance: distancePixelsMs,
+        duration: timeToReachMs,
         ease: Math.Easing.Sine.Out,
-        onComplete: (tween, targets, param) => {
+        onUpdate: (tween) => {
+          let previousDistance = tween.data[0].previous;
+          let currentDistance = tween.data[0].current;
+          let deltaDistance = currentDistance - previousDistance;
+          this.options.forEach(option => this.motor.moveOption(option, deltaDistance));
+        },
+        onComplete: () => {
           resolve();
         },
       });
