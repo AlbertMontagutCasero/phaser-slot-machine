@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
-import BootloaderScene from "./scenes/bootloader-scene";
+import BootloaderScene from "./view/scenes/bootloader-scene";
 
 export const gameConfig = {
   type: Phaser.CANVAS,
