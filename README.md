@@ -1,6 +1,6 @@
 ![img](./badges/coverage-branches.svg)
 ![img](./badges/coverage-functions.svg)
-![img](./badges/coverage-jest coverage.svg)
+![img](./badges/coverage-jest%20coverage.svg)
 ![img](./badges/coverage-lines.svg)
 ![img](./badges/coverage-statements.svg)
 
